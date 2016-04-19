@@ -12,6 +12,7 @@
     <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:completionThreshold="3"
         android:id="@+id/autoCompleteTextView"
         android:layout_row="1"
         android:layout_column="0"
@@ -38,7 +39,7 @@
         android:id="@+id/switch1"
         android:checked="false"
         android:layout_alignTop="@+id/textView2"
-        android:layout_toEndOf="@+id/button2" />
+        android:layout_toEndOf="@+id/clearButton" />
 
     <Button
         android:layout_width="wrap_content"
@@ -54,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Clear"
-        android:id="@+id/button2"
+        android:id="@+id/clearButton"
         android:layout_weight="0.5"
         android:layout_below="@+id/autoCompleteTextView"
         android:layout_alignParentStart="true"
@@ -69,7 +70,7 @@
         android:id="@+id/textView2"
         android:layout_row="0"
         android:layout_column="0"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/clearButton"
         android:layout_alignParentStart="true"
         android:layout_marginTop="30dp"
         android:textColor="#000000" />
