@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Get Quote"
-        android:id="@+id/button3"
+        android:id="@+id/getQuoteButton"
         android:layout_weight="0.5"
         android:layout_below="@+id/autoCompleteTextView"
         android:layout_alignParentEnd="true"
@@ -59,7 +59,7 @@
         android:layout_weight="0.5"
         android:layout_below="@+id/autoCompleteTextView"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/button3" />
+        android:layout_toStartOf="@+id/getQuoteButton" />
 
     <TextView
         android:layout_width="wrap_content"

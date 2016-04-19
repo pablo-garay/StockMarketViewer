@@ -1,6 +1,7 @@
 package com.pgaray.stockmarketviewer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,6 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -41,6 +44,12 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
             }
         });
+
+        Intent intent = getIntent();
+        String stockSymbol = intent.getStringExtra("symbol");
+//        TextView tv = (TextView) findViewById(R.id.textView3);
+//        tv.setText(stockSymbol);
+        Log.d("Received symbol", "onCreate: " + stockSymbol);
     }
 
     private class CustomAdapter extends FragmentPagerAdapter {

@@ -1,5 +1,6 @@
 package com.pgaray.stockmarketviewer;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -86,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* Clear button functionality */
-        Button clickButton = (Button) findViewById(R.id.clearButton );
-        clickButton.setOnClickListener( new View.OnClickListener() {
+        Button clearButton = (Button) findViewById(R.id.clearButton );
+        clearButton.setOnClickListener( new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -95,7 +96,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /* Get Quote button functionality */
+        Button getQuoteButton = (Button) findViewById(R.id.getQuoteButton);
+        getQuoteButton.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d("Get Quote", "onClick: " + autoCompleteTextView.getText().toString());
+                getQuote(autoCompleteTextView.getText().toString());
+            }
+        });
     }
+
+    private void getQuote(String symbol){
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("symbol", symbol);
+        startActivity(intent);
+    }
+
     class getJson extends AsyncTask<String,String,String>{
 
         HttpURLConnection urlConnection;
