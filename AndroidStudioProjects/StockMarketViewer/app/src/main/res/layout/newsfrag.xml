@@ -11,4 +11,11 @@
         android:id="@+id/textView3"
         android:layout_gravity="center_horizontal"
         android:textColor="#000000" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/newsListView"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp" />
 </LinearLayout>

@@ -3,14 +3,14 @@ package com.pgaray.stockmarketviewer;
 /**
  * Created by Pablo on 4/30/2016.
  */
-public final class stockDetailsEntry {
+public final class StockDetailsEntry {
 
     private final String title;
     private final String value;
     private final int icon;
 
-    public stockDetailsEntry(final String title, final String value,
-                     final int icon) {
+    public StockDetailsEntry(final String title, final String value,
+                             final int icon) {
         this.title = title;
         this.value = value;
         this.icon = icon;

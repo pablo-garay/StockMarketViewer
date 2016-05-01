@@ -2,7 +2,6 @@ package com.pgaray.stockmarketviewer;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,16 +13,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +28,7 @@ public class ResultActivity extends AppCompatActivity {
 
         /* the following creates a ViewPager with the 3 tabs */
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new CustomAdapter(getSupportFragmentManager(), getApplicationContext()));
+        viewPager.setAdapter(new CustomFragmentPagerAdapter(getSupportFragmentManager(), getApplicationContext()));
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
@@ -50,6 +39,7 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) populateStockDetailsListView();
+                if (tab.getPosition() == 2) populateNewsListView();
             }
 
             @Override
@@ -57,6 +47,7 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) populateStockDetailsListView();
+                if (tab.getPosition() == 2) populateNewsListView();
             }
 
             @Override
@@ -64,6 +55,7 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) populateStockDetailsListView();
+                if (tab.getPosition() == 2) populateNewsListView();
             }
         });
 
@@ -83,38 +75,56 @@ public class ResultActivity extends AppCompatActivity {
     private void populateStockDetailsListView() {
         /* Create a list of items */
 
-        final List<stockDetailsEntry> entries = new ArrayList<stockDetailsEntry>();
+        final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
 
-        entries.add(new stockDetailsEntry("NAME", "name1", 0));
-        entries.add(new stockDetailsEntry("SYMBOL", "symbol1", 0));
-        entries.add(new stockDetailsEntry("LASTPRICE", "lastprice1", 0));
-        entries.add(new stockDetailsEntry("CHANGE", "change1", 0));
-        entries.add(new stockDetailsEntry("TIMESTAMP", "timestamp1", 0));
-        entries.add(new stockDetailsEntry("MARKETCAP", "marketcap1", 0));
-        entries.add(new stockDetailsEntry("VOLUME", "volume1", 0));
-        entries.add(new stockDetailsEntry("CHANGEYTD", "changeytd1", 0));
-        entries.add(new stockDetailsEntry("HIGH", "high1", 0));
-        entries.add(new stockDetailsEntry("LOW", "low1", 0));
-        entries.add(new stockDetailsEntry("OPEN", "open1", 0));
+        entries.add(new StockDetailsEntry("NAME", "name1", 0));
+        entries.add(new StockDetailsEntry("SYMBOL", "symbol1", 0));
+        entries.add(new StockDetailsEntry("LASTPRICE", "lastprice1", 0));
+        entries.add(new StockDetailsEntry("CHANGE", "change1", 0));
+        entries.add(new StockDetailsEntry("TIMESTAMP", "timestamp1", 0));
+        entries.add(new StockDetailsEntry("MARKETCAP", "marketcap1", 0));
+        entries.add(new StockDetailsEntry("VOLUME", "volume1", 0));
+        entries.add(new StockDetailsEntry("CHANGEYTD", "changeytd1", 0));
+        entries.add(new StockDetailsEntry("HIGH", "high1", 0));
+        entries.add(new StockDetailsEntry("LOW", "low1", 0));
+        entries.add(new StockDetailsEntry("OPEN", "open1", 0));
 
         /* Build Adapter */
-        ArrayAdapter<stockDetailsEntry> adapter = new StockDetailAdapter(this, entries);
-
-
-        /*ArrayAdapter<stockDetailsEntry> adapter = new ArrayAdapter<stockDetailsEntry>(
-                this,                                   *//* context *//*
-                android.R.layout.simple_list_item_1,    *//* Layout to use (create) *//*
-                titles);                                *//* items to be displayed */
+        ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(this, entries);
 
         /* Configure the list view */
         ListView list = (ListView) findViewById(R.id.stockDetailsListView);
         list.setAdapter(adapter);
     }
+    private void populateNewsListView() {
+        /* Create a list of items */
 
-    private class CustomAdapter extends FragmentPagerAdapter {
+        final List<NewsEntry> newsEntries = new ArrayList<NewsEntry>();
+
+        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+                                  "Date: 24 March 2016, 10:37:30"));
+        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+                                  "Date: 24 March 2016, 10:37:30"));
+        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+                                  "Date: 24 March 2016, 10:37:30"));
+        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+                                  "Date: 24 March 2016, 10:37:30"));
+        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+                                  "Date: 24 March 2016, 10:37:30"));
+        Log.d("Created News Entries", "create news entries");
+
+        /* Build Adapter */
+        ArrayAdapter<NewsEntry> adapter = new NewsEntryAdapter(this, newsEntries);
+
+        /* Configure the list view */
+        ListView list = (ListView) findViewById(R.id.newsListView);
+        list.setAdapter(adapter);
+    }
+
+    private class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
         private String fragments [] = {"Current", "Historical", "News"};
 
-        public CustomAdapter(FragmentManager supportFragmentManager, Context applicationContext) {
+        public CustomFragmentPagerAdapter(FragmentManager supportFragmentManager, Context applicationContext) {
             super(supportFragmentManager);
         }
 
