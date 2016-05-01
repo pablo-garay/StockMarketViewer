@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -39,6 +40,7 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) populateStockDetailsListView();
+                if (tab.getPosition() == 1) loadHistoricalChartWebView();
                 if (tab.getPosition() == 2) populateNewsListView();
             }
 
@@ -47,6 +49,7 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) populateStockDetailsListView();
+                if (tab.getPosition() == 1) loadHistoricalChartWebView();
                 if (tab.getPosition() == 2) populateNewsListView();
             }
 
@@ -55,6 +58,7 @@ public class ResultActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) populateStockDetailsListView();
+                if (tab.getPosition() == 1) loadHistoricalChartWebView();
                 if (tab.getPosition() == 2) populateNewsListView();
             }
         });
@@ -119,6 +123,16 @@ public class ResultActivity extends AppCompatActivity {
         /* Configure the list view */
         ListView list = (ListView) findViewById(R.id.newsListView);
         list.setAdapter(adapter);
+    }
+
+    private void loadHistoricalChartWebView(){
+        WebView browser = (WebView) findViewById(R.id.webView);
+        /* set loading of images */
+        browser.getSettings().setLoadsImagesAutomatically(true);
+        /* enable JS */
+        browser.getSettings().setJavaScriptEnabled(true);
+        String url = "file:///android_asset/helloworld.html";
+        browser.loadUrl(url);
     }
 
     private class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
