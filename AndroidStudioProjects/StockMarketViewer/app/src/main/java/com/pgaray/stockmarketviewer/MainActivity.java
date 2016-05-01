@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 // Your code for a general case (suggest valid options to select)
                 if (newText.length() >= 3){
                     /*Log.d("InputString", newText);*/
-                    new getJson().execute(newText);
+                    new autocompleteGetJson().execute(newText);
                 }
             }
         };
@@ -112,9 +113,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("symbol", symbol);
         startActivity(intent);
+
+        String message = "You selected: " + symbol;
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
-    class getJson extends AsyncTask<String,String,String>{
+    class autocompleteGetJson extends AsyncTask<String,String,String>{
 
         HttpURLConnection urlConnection;
         public List<String> suggest;

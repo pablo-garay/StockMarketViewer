@@ -7,7 +7,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Content1"
+        android:text="Stock Details"
         android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#000000" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/stockDetailsListView"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>
