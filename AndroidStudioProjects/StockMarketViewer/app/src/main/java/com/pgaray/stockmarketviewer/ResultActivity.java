@@ -131,7 +131,7 @@ public class ResultActivity extends AppCompatActivity {
         browser.getSettings().setLoadsImagesAutomatically(true);
         /* enable JS */
         browser.getSettings().setJavaScriptEnabled(true);
-        String url = "file:///android_asset/helloworld.html";
+        String url = "file:///android_asset/historicalchart.html";
         browser.loadUrl(url);
     }
 
