@@ -24,5 +24,7 @@
         app:tabMode="fixed"
         app:tabGravity="fill"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20dp"
+        style="@style/NavigationTab" />
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -39,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* ------------------ Start AutoComplete feature ---------------------------*/
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
-        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.item);
+        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.autocomplete_item);
         autoCompleteTextView.setAdapter(adapter);
         /*suggest = new ArrayList<String>();*/
 
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 autoCompleteTextView.addTextChangedListener(textWatcher);
             }
         });
+        /* ------------------ End AutoComplete feature ---------------------------*/
 
         /* Clear button functionality */
         Button clearButton = (Button) findViewById(R.id.clearButton );
@@ -107,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
                 getQuote(autoCompleteTextView.getText().toString());
             }
         });
+
+        /* Display Favorites in ListView */
+        populateFavoritesListView();
     }
 
     private void getQuote(String symbol){
@@ -179,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
 
             runOnUiThread(new Runnable(){
                 public void run(){
-                    ArrayAdapter<Stock> aAdapter = new ArrayAdapter<MainActivity.Stock>(getApplicationContext(),R.layout.item, suggest);
+                    ArrayAdapter<Stock> aAdapter = new ArrayAdapter<MainActivity.Stock>(getApplicationContext(),
+                            R.layout.autocomplete_item, suggest);
 //                    aAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.item,suggest);
                     /*autoCompleteTextView.setThreshold(3); *//* wait for 3 characters to show suggestions or hints */
                     autoCompleteTextView.setAdapter(aAdapter);
@@ -205,6 +212,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void populateFavoritesListView() {
+        /* Create a list of items */
+        final List<FavoriteEntry> favoritesEntries = new ArrayList<FavoriteEntry>();
+
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+
+        /* Build Adapter */
+        ArrayAdapter<FavoriteEntry> adapter = new FavoritesEntryAdapter(this, favoritesEntries);
+
+        /* Configure the list view */
+        NonScrollListView list = (NonScrollListView) findViewById(R.id.favoritesListView);
+        list.setAdapter(adapter);
+    }
 
 //    private class getStockSuggestions extends AsyncTask<Void, Void, String> {
 //        @Override

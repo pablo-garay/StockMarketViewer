@@ -9,6 +9,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/webView"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.80"
-        android:layout_marginTop="10dp" />
+        android:layout_weight="0.80" />
 </LinearLayout>

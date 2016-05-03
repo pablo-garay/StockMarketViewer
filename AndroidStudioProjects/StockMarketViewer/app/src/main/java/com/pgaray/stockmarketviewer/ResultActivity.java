@@ -2,6 +2,9 @@ package com.pgaray.stockmarketviewer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,8 +15,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +83,6 @@ public class ResultActivity extends AppCompatActivity {
 
     private void populateStockDetailsListView() {
         /* Create a list of items */
-
         final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
 
         entries.add(new StockDetailsEntry("NAME", "name1", 0));
@@ -97,8 +101,14 @@ public class ResultActivity extends AppCompatActivity {
         ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(this, entries);
 
         /* Configure the list view */
-        ListView list = (ListView) findViewById(R.id.stockDetailsListView);
+        NonScrollListView list = (NonScrollListView) findViewById(R.id.stockDetailsListView);
         list.setAdapter(adapter);
+
+        /* show The Image in a ImageView */
+        ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
+        new DownloadImageTask(chartImageView)
+                .execute("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200");
+
     }
     private void populateNewsListView() {
         /* Create a list of items */
@@ -164,6 +174,31 @@ public class ResultActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position){
             return fragments[position];
+        }
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap imageBitmap = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                imageBitmap = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return imageBitmap;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 
