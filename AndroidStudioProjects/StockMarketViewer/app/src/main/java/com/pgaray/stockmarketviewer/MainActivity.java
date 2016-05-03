@@ -2,8 +2,10 @@ package com.pgaray.stockmarketviewer;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -40,7 +42,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /* ------------------ Start AutoComplete feature ---------------------------*/
+        /* set and show icon */
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true); // set show icon = true
+        actionBar.setIcon(R.drawable.stockmarket);
+
+        /* ------------------ Start of code for AutoComplete feature ---------------------- */
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
         ArrayAdapter adapter = new ArrayAdapter(this, R.layout.autocomplete_item);
         autoCompleteTextView.setAdapter(adapter);
@@ -218,6 +225,14 @@ public class MainActivity extends AppCompatActivity {
 
         favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
                 "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
+        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+                        "+0.92%", "Market Cap: 609.80 Billion"));
         favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
                         "+0.92%", "Market Cap: 609.80 Billion"));
         favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",

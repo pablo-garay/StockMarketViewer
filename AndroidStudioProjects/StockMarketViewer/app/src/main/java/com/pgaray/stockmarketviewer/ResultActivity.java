@@ -32,6 +32,20 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        /* Enable the back button in app */
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        /* get Intent which is the company's symbol */
+        Intent intent = getIntent();
+        String stockSymbol = intent.getStringExtra("symbol");
+//        TextView tv = (TextView) findViewById(R.id.textView3);
+//        tv.setText(stockSymbol);
+        Log.d("Received symbol", "onCreate: " + stockSymbol);
+
+        /* change actionbar title */
+        setTitle("Facebook, Inc.");
+
         /* the following creates a ViewPager with the 3 tabs */
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new CustomFragmentPagerAdapter(getSupportFragmentManager(), getApplicationContext()));
@@ -67,13 +81,6 @@ public class ResultActivity extends AppCompatActivity {
                 if (tab.getPosition() == 2) populateNewsListView();
             }
         });
-
-        /* get Intent which is the company's symbol */
-        Intent intent = getIntent();
-        String stockSymbol = intent.getStringExtra("symbol");
-//        TextView tv = (TextView) findViewById(R.id.textView3);
-//        tv.setText(stockSymbol);
-        Log.d("Received symbol", "onCreate: " + stockSymbol);
 
         /* populate Current Details ListView with stock details */
 //        populateStockDetailsListView();
