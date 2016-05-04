@@ -9,7 +9,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -74,7 +73,7 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
+                if (tab.getPosition() == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
             }
@@ -83,7 +82,7 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabUnselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
+                if (tab.getPosition() == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
             }
@@ -92,14 +91,14 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
+                if (tab.getPosition() == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
             }
         });
 
         /* populate Current Details ListView with stock details */
-//        new StockDetailsListViewFiller().execute(stockSymbol);
+//        new StockDetailsFragmentFiller().execute(stockSymbol);
 
 //        getList
     }
@@ -218,7 +217,7 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
-    class StockDetailsListViewFiller extends AsyncTask<String,String,String> {
+    class StockDetailsFragmentFiller extends AsyncTask<String,String,String> {
         HttpURLConnection urlConnection;
 
         @Override
@@ -227,6 +226,7 @@ public class ResultActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
             String json_string = null;
             final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
+            int val;
 
             try{
                 /* ------------------ Loading string from server content ------------------------ */
@@ -254,11 +254,14 @@ public class ResultActivity extends AppCompatActivity {
                     entries.add(new StockDetailsEntry("NAME", resultObject.get("Name").toString(), 0));
                     entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
                     entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
-                    entries.add(new StockDetailsEntry("CHANGE", resultObject.get("Change (Change Percent)").toString(), 0));
+                    entries.add(new StockDetailsEntry("CHANGE",
+                            resultObject.get("Change (Change Percent)").toString(), (int) resultObject.get("Change Indicator")));
                     entries.add(new StockDetailsEntry("TIMESTAMP", resultObject.get("Time and Date").toString(), 0));
                     entries.add(new StockDetailsEntry("MARKETCAP", resultObject.get("Market Cap").toString(), 0));
                     entries.add(new StockDetailsEntry("VOLUME", resultObject.get("Volume").toString(), 0));
-                    entries.add(new StockDetailsEntry("CHANGEYTD", resultObject.get("Change YTD (Change Percent YTD)").toString(), 0));
+                    entries.add(new StockDetailsEntry("CHANGEYTD",
+                            resultObject.get("Change YTD (Change Percent YTD)").toString(),
+                            (int) resultObject.get("Change YTD Indicator")));
                     entries.add(new StockDetailsEntry("HIGH", resultObject.get("High").toString(), 0));
                     entries.add(new StockDetailsEntry("LOW", resultObject.get("Low").toString(), 0));
                     entries.add(new StockDetailsEntry("OPEN", resultObject.get("Open").toString(), 0));
@@ -297,7 +300,7 @@ public class ResultActivity extends AppCompatActivity {
                     NonScrollListView list = (NonScrollListView) findViewById(R.id.stockDetailsListView);
                     list.setAdapter(adapter);
 
-                    /* show The Image in a ImageView */
+                    /* show Image in a ImageView */
                     ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
                     new DownloadImageTask(chartImageView)
                             .execute("http://chart.finance.yahoo.com/t?s=" + companySymbol + "&lang=en-US&width=1200&height=1200");

@@ -7,13 +7,13 @@ public final class StockDetailsEntry {
 
     private final String title;
     private final String value;
-    private final int icon;
+    private final int indicatorValue;
 
     public StockDetailsEntry(final String title, final String value,
-                             final int icon) {
+                             final int indicatorValue) {
         this.title = title;
         this.value = value;
-        this.icon = icon;
+        this.indicatorValue = indicatorValue;
     }
 
     /**
@@ -33,8 +33,8 @@ public final class StockDetailsEntry {
     /**
      * @return Icon of this stock details entry
      */
-    public int getIcon() {
-        return icon;
+    public int getIndicatorValue() {
+        return indicatorValue;
     }
 
 }
