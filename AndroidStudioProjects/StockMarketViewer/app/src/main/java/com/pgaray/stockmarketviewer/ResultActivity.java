@@ -25,6 +25,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookDialog;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,10 +53,43 @@ public class ResultActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     private boolean isFavorite = false;
+    private ShareDialog shareDialog;
+    private CallbackManager callbackManager;
+    private String stockSymbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /* Facebook init */
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+        // this part is optional -- register callback to manage result after Share dialog
+        // user interaction is done
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                if (result.getPostId() != null){
+                    /* Content has been shared and posted */
+                    Toast.makeText(ResultActivity.this, "You shared this post", Toast.LENGTH_LONG).show();
+                } else {
+                    /* Not posted e.g. User hit cancel Button */
+                    Toast.makeText(ResultActivity.this, "Post not shared", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                /* User turned back from FB share offer page */
+                Toast.makeText(ResultActivity.this, "The post has not been shared", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(ResultActivity.this, "Error while trying to share post", Toast.LENGTH_LONG).show();
+            }
+        });
+        /* End of Facebook init */
         setContentView(R.layout.activity_result);
 
         /* Enable the back button in app */
@@ -57,7 +98,7 @@ public class ResultActivity extends AppCompatActivity {
 
         /* get Intent which is the company's symbol */
         Intent intent = getIntent();
-        final String stockSymbol = intent.getStringExtra("symbol");
+        stockSymbol = intent.getStringExtra("symbol");
 //        TextView tv = (TextView) findViewById(R.id.textView3);
 //        tv.setText(stockSymbol);
         Log.d("Received symbol", "onCreate: " + stockSymbol);
@@ -133,18 +174,40 @@ public class ResultActivity extends AppCompatActivity {
                 supportInvalidateOptionsMenu();
                 Toast.makeText(ResultActivity.this, "Bookmarked Favorite", Toast.LENGTH_LONG).show();
                 return true;
+
             case R.id.action_remove_favorite:
                 isFavorite = false;
                 /*updateFavorite();*/
                 supportInvalidateOptionsMenu();
-                Toast.makeText(ResultActivity.this, "Removed from Favorites", Toast.LENGTH_LONG).show();
+                /* DONT DISPLAY text when favorite removed as requested by client */
+                /*Toast.makeText(ResultActivity.this, "Removed from Favorites", Toast.LENGTH_LONG).show();*/
                 return true;
+
             case R.id.action_share_facebook:
-                Toast.makeText(ResultActivity.this, "You pressed the FB button", Toast.LENGTH_LONG).show();
+
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse("http://dev.markitondemand.com/MODApis/"))
+                            .setContentTitle("Current Stock Price of Facebook, Inc., $ 123")
+                            .setImageUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200"))
+                            .setContentDescription(
+                                    "Stock Information of Facebook, Inc.")
+                            .build();
+
+                    shareDialog.show(linkContent /*, ShareDialog.Mode*/); /* Show Facebook Share Dialog */
+                }
+
+                /*Toast.makeText(ResultActivity.this, "You pressed the FB button", Toast.LENGTH_LONG).show();*/
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void loadHistoricalChartWebView(String stockSymbol){
