@@ -76,7 +76,7 @@ public class ResultActivity extends AppCompatActivity {
 
                 if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
-                if (tab.getPosition() == 2) populateNewsListView();
+                if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
             }
 
             @Override
@@ -85,7 +85,7 @@ public class ResultActivity extends AppCompatActivity {
 
                 if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
-                if (tab.getPosition() == 2) populateNewsListView();
+                if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
             }
 
             @Override
@@ -94,7 +94,7 @@ public class ResultActivity extends AppCompatActivity {
 
                 if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
-                if (tab.getPosition() == 2) populateNewsListView();
+                if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
             }
         });
 
@@ -142,33 +142,6 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void populateNewsListView() {
-        /* Create a list of items */
-
-//        final List<NewsEntry> newsEntries = new ArrayList<NewsEntry>();
-//
-//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-//                                  "Date: 24 March 2016, 10:37:30"));
-//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-//                                  "Date: 24 March 2016, 10:37:30"));
-//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-//                                  "Date: 24 March 2016, 10:37:30"));
-//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-//                                  "Date: 24 March 2016, 10:37:30"));
-//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-//                                  "Date: 24 March 2016, 10:37:30"));
-//        Log.d("Created News Entries", "create news entries");
-//
-//        /* Build Adapter */
-//        ArrayAdapter<NewsEntry> adapter = new NewsEntryAdapter(this, newsEntries);
-//
-//        /* Configure the list view */
-//        ListView list = (ListView) findViewById(R.id.newsListView);
-//        list.setAdapter(adapter);
-
-        new NewsFeedListViewFiller().execute("AAPL");
     }
 
     private void loadHistoricalChartWebView(String stockSymbol){
@@ -250,7 +223,7 @@ public class ResultActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... key) {
-            String companySymbol = key[0];
+            final String companySymbol = key[0];
             StringBuilder sb = new StringBuilder();
             String json_string = null;
             final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
@@ -327,7 +300,7 @@ public class ResultActivity extends AppCompatActivity {
                     /* show The Image in a ImageView */
                     ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
                     new DownloadImageTask(chartImageView)
-                            .execute("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200");
+                            .execute("http://chart.finance.yahoo.com/t?s=" + companySymbol + "&lang=en-US&width=1200&height=1200");
                 }
             });
             return null;
