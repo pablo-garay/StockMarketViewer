@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,7 +74,7 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) new getStockDetailsJSON().execute(stockSymbol);
+                if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) populateNewsListView();
             }
@@ -81,7 +83,7 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabUnselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) new getStockDetailsJSON().execute(stockSymbol);
+                if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) populateNewsListView();
             }
@@ -90,14 +92,14 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) new getStockDetailsJSON().execute(stockSymbol);
+                if (tab.getPosition() == 0) new StockDetailsListViewFiller().execute(stockSymbol);
                 if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) populateNewsListView();
             }
         });
 
         /* populate Current Details ListView with stock details */
-//        new getStockDetailsJSON().execute(stockSymbol);
+//        new StockDetailsListViewFiller().execute(stockSymbol);
 
 //        getList
     }
@@ -145,26 +147,28 @@ public class ResultActivity extends AppCompatActivity {
     private void populateNewsListView() {
         /* Create a list of items */
 
-        final List<NewsEntry> newsEntries = new ArrayList<NewsEntry>();
+//        final List<NewsEntry> newsEntries = new ArrayList<NewsEntry>();
+//
+//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+//                                  "Date: 24 March 2016, 10:37:30"));
+//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+//                                  "Date: 24 March 2016, 10:37:30"));
+//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+//                                  "Date: 24 March 2016, 10:37:30"));
+//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+//                                  "Date: 24 March 2016, 10:37:30"));
+//        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
+//                                  "Date: 24 March 2016, 10:37:30"));
+//        Log.d("Created News Entries", "create news entries");
+//
+//        /* Build Adapter */
+//        ArrayAdapter<NewsEntry> adapter = new NewsEntryAdapter(this, newsEntries);
+//
+//        /* Configure the list view */
+//        ListView list = (ListView) findViewById(R.id.newsListView);
+//        list.setAdapter(adapter);
 
-        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-                                  "Date: 24 March 2016, 10:37:30"));
-        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-                                  "Date: 24 March 2016, 10:37:30"));
-        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-                                  "Date: 24 March 2016, 10:37:30"));
-        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-                                  "Date: 24 March 2016, 10:37:30"));
-        newsEntries.add(new NewsEntry("Title", "Content", "Publisher: Publisher1",
-                                  "Date: 24 March 2016, 10:37:30"));
-        Log.d("Created News Entries", "create news entries");
-
-        /* Build Adapter */
-        ArrayAdapter<NewsEntry> adapter = new NewsEntryAdapter(this, newsEntries);
-
-        /* Configure the list view */
-        ListView list = (ListView) findViewById(R.id.newsListView);
-        list.setAdapter(adapter);
+        new NewsFeedListViewFiller().execute("AAPL");
     }
 
     private void loadHistoricalChartWebView(String stockSymbol){
@@ -241,8 +245,7 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
-    class getStockDetailsJSON extends AsyncTask<String,String,String> {
-
+    class StockDetailsListViewFiller extends AsyncTask<String,String,String> {
         HttpURLConnection urlConnection;
 
         @Override
@@ -305,27 +308,6 @@ public class ResultActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                /*for (int i = 0; i < array.length(); i++) {
-                    try{
-                        JSONObject row = array.getJSONObject(i);
-
-                        *//*Log.d("Symbol", row.getString("Symbol"));
-                        Log.d("Name", row.getString("Name"));
-                        Log.d("Exchange", row.getString("Exchange"));*//*
-                        Stock SuggestKey;
-                        suggest.add(new Stock(row.getString("Symbol"), row.getString("Name"), row.getString("Exchange")));
-                    } catch (JSONException e) {
-                        // Oops
-                        e.printStackTrace();
-                    }
-                }*/
-
-                /*
-                JSONArray jArray = new JSONArray(sb);
-                for(int i=0;i<jArray.getJSONArray(1).length();i++){
-
-                }*/
-
             }catch(Exception e){
                 Log.w("Error", e.getMessage());
             }finally {
@@ -346,6 +328,86 @@ public class ResultActivity extends AppCompatActivity {
                     ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
                     new DownloadImageTask(chartImageView)
                             .execute("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200");
+                }
+            });
+            return null;
+        }
+    }
+
+    class NewsFeedListViewFiller extends AsyncTask<String,String,String> {
+        HttpURLConnection urlConnection;
+
+        @Override
+        protected String doInBackground(String... key) {
+            String companySymbol = key[0];
+            StringBuilder sb = new StringBuilder();
+            String json_string = null;
+            final List<NewsEntry> newsListEntries = new ArrayList<NewsEntry>();
+
+            try{
+                /* ------------------ Loading string from server content ------------------------ */
+                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?newsq="+companySymbol);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                json_string = sb.toString();
+                /*Log.d("Info", result);*/
+                /* ------------- Finished. String fully loaded from server response ------------- */
+                Log.d("Result", sb.toString());
+
+                /* We receive a JSON array (not a JSON object), so we should create a JSONArray */
+                JSONArray array = new JSONArray(json_string);
+                System.out.println("arr: " + array.toString());
+
+                try {
+                    /* Create a list of items */
+                    for (int i = 0; i < array.length(); i++) {
+                        try{
+                            /* Important note: The elements of the array are objects */
+                            JSONObject row = array.getJSONObject(i);
+                            /*Log.d("News Row::::::::", row.toString());*/
+                            /*Log.d("Title", row.getString("Title"));
+                            Log.d("Description", row.getString("Description"));
+                            Log.d("Source", row.getString("Source"));
+                            Log.d("Date", row.getString("Date"));*/
+                            newsListEntries.add(new NewsEntry(
+                                    row.getString("Title"),
+                                    row.getString("Description"),
+                                    "Publisher: " + row.getString("Source"),
+                                    "Date: " + row.getString("Date") ));
+
+                        } catch (JSONException e) {
+                            // Oops
+                            e.printStackTrace();
+                        }
+                    }
+
+                } catch (Exception e) {
+                    // Oops
+                    e.printStackTrace();
+                }
+
+            }catch(Exception e){
+                Log.w("Error", e.getMessage());
+            }finally {
+                urlConnection.disconnect();
+            }
+
+            runOnUiThread(new Runnable(){
+                public void run(){
+                    /* populate News ListView */
+                    /* Build Adapter */
+                    ArrayAdapter<NewsEntry> adapter = new NewsEntryAdapter(ResultActivity.this,
+                                                                            newsListEntries);
+                    /* Configure the list view */
+                    ListView list = (ListView) findViewById(R.id.newsListView);
+                    list.setAdapter(adapter);
                 }
             });
             return null;

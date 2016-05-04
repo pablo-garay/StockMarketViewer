@@ -136,11 +136,11 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... key) {
             String newText = key[0];
             StringBuilder sb = new StringBuilder();
-            String string_of_json = null;
+            String json_string = null;
             final ArrayList<Stock> suggest= new ArrayList<MainActivity.Stock>();
 
             try{
-
+                 /* ------------------ Loading string from server stream ------------------------ */
                 URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?input="+newText);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
@@ -151,13 +151,13 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null) {
                     sb.append(line);
                 }
-                string_of_json = sb.toString();
+                json_string = sb.toString();
                 /*Log.d("Info", result);*/
-
+                /* ------------- Finished. String fully loaded from server response ------------- */
                 Log.d("Result", sb.toString());
 
                 /* We receive a JSON array (not a JSON object), so we should create a JSONArray */
-                JSONArray array = new JSONArray(string_of_json);
+                JSONArray array = new JSONArray(json_string);
                 /*System.out.println("arr: " + Arrays.toString(array));*/
                 for (int i = 0; i < array.length(); i++) {
                     try{
