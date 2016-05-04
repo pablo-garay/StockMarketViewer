@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ResultActivity">
+
+    <item
+        android:id="@+id/action_add_favorite"
+        android:icon="@mipmap/empty_star"
+        android:title="Add Favorite"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_remove_favorite"
+        android:icon="@mipmap/yellow_star"
+        android:title="Remove Favorite"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_share_facebook"
+        android:icon="@mipmap/facebook_icon"
+        android:title="Share on Facebook"
+        app:showAsAction="ifRoom" />
+</menu>

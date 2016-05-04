@@ -13,10 +13,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ public class ResultActivity extends AppCompatActivity {
 
     TabLayout tabLayout;
     ViewPager viewPager;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,46 @@ public class ResultActivity extends AppCompatActivity {
 //        populateStockDetailsListView();
 
 //        getList
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /* Inflate the menu; this add items to the action bar if is present */
+        getMenuInflater().inflate(R.menu.menu_result, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        /* show or hide Add and Remove Favorite buttons according to whether the element if favorite */
+        menu.findItem(R.id.action_add_favorite).setVisible(!isFavorite);
+        menu.findItem(R.id.action_remove_favorite).setVisible(isFavorite);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.action_add_favorite:
+                isFavorite = true;
+                /*updateFavorite();*/
+                supportInvalidateOptionsMenu();
+                Toast.makeText(ResultActivity.this, "Bookmarked Favorite", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_remove_favorite:
+                isFavorite = false;
+                /*updateFavorite();*/
+                supportInvalidateOptionsMenu();
+                Toast.makeText(ResultActivity.this, "Removed from Favorites", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_share_facebook:
+                Toast.makeText(ResultActivity.this, "You pressed the FB button", Toast.LENGTH_LONG).show();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void populateStockDetailsListView() {
