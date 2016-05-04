@@ -1,9 +1,11 @@
 package com.pgaray.stockmarketviewer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,7 +17,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -356,7 +360,8 @@ public class ResultActivity extends AppCompatActivity {
                                     row.getString("Title"),
                                     row.getString("Description"),
                                     "Publisher: " + row.getString("Source"),
-                                    "Date: " + row.getString("Date") ));
+                                    "Date: " + row.getString("Date"),
+                                    row.getString("Url")));
 
                         } catch (JSONException e) {
                             // Oops
@@ -384,6 +389,18 @@ public class ResultActivity extends AppCompatActivity {
                     /* Configure the list view */
                     ListView list = (ListView) findViewById(R.id.newsListView);
                     list.setAdapter(adapter);
+
+                    list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                        @Override
+                        public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                            NewsEntry singleItem = (NewsEntry) adapter.getItemAtPosition(position);
+                            String url = singleItem.getNewsUrl();
+                            /* open URL */
+                            Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(intent);
+                        }
+                    });
                 }
             });
             return null;

@@ -9,13 +9,15 @@ public final class NewsEntry {
     private final String content;
     private final String publisher;
     private final String date;
+    private final String url;
 
     public NewsEntry(final String title, final String content,
-                     final String publisher, final String date) {
+                     final String publisher, final String date, final String url) {
         this.title = title;
         this.content = content;
         this.publisher = publisher;
         this.date = date;
+        this.url = url;
     }
     /**
      * @return Title of news entry
@@ -25,17 +27,22 @@ public final class NewsEntry {
     }
 
     /**
-     * @return Value of news entry
+     * @return Content of news entry
      */
     public String getNewsContent() { return content; }
 
     /**
-     * @return Value of news entry
+     * @return Publisher of news entry
      */
     public String getNewsPublisher() { return publisher; }
 
     /**
-     * @return Value of news entry
+     * @return Date of news entry
      */
     public String getNewsDate() { return date; }
+
+    /**
+     * @return Url of news entry
+     */
+    public String getNewsUrl() { return url; }
 }
