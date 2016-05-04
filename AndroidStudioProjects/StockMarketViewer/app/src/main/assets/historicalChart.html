@@ -29,39 +29,7 @@
             font-size: 14px;
             padding-top: 1em;
         }
-        
-        /*screen-xs*/
-        @media (max-width: 768px) { 
-            .col-xs-1,
-            .col-xs-2,
-            .col-xs-3,
-            .col-xs-4,
-            .col-xs-5 {
-                padding-left: 10px; padding-right: 0px;
-                margin: 0;
-            }
-            .col-xs-6 {
-                padding-left: 10px; padding-right: 10px;
-                margin: 0;
-            }
-            .col-xs-7,
-            .col-xs-8,
-            .col-xs-9,
-            .col-xs-10,
-            .col-xs-11 {
-                padding-left: 0px; padding-right: 10px;
-                margin: 0;
-            }
-            .col-xs-12 {
-                padding: 0px;
-            }
-            .custom-panel-body {
-                padding: 5px;
-                padding-bottom: 0;
-            }
-        }
-    </style>    
-
+    </style>
 </head>
 
 <body>
@@ -99,7 +67,7 @@
     $( document ).ready(function() {
         console.log( "ready!");
         
-        showCompanyStockDetails("AAPL");
+        showCompanyStockDetails(getUrlParameter('symbol'));
         
         $('.nav-pills a').on('shown.bs.tab', function(){
             resizeCarousel();
@@ -145,6 +113,21 @@
         var container = "#stockValuesChartContainer";
         new Markit.InteractiveChartApi(sym, dur, container);
     }
+
+	var getUrlParameter = function getUrlParameter(sParam) {
+	    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+	        sURLVariables = sPageURL.split('&'),
+	        sParameterName,
+	        i;
+
+	    for (i = 0; i < sURLVariables.length; i++) {
+	        sParameterName = sURLVariables[i].split('=');
+
+	        if (sParameterName[0] === sParam) {
+	            return sParameterName[1] === undefined ? true : sParameterName[1];
+	        }
+	    }
+	};    
     
     </script>
 </body>

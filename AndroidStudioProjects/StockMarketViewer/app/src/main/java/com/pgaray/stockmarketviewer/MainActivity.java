@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -77,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 // Your code for a general case (suggest valid options to select)
                 if (newText.length() >= 3){
                     /*Log.d("InputString", newText);*/
-                    new autocompleteGetJson().execute(newText);
+                    new autocompleteTextViewFiller().execute(newText);
                 }
             }
         };
@@ -131,10 +129,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
-    class autocompleteGetJson extends AsyncTask<String,String,String>{
-
+    class autocompleteTextViewFiller extends AsyncTask<String,String,String>{
         HttpURLConnection urlConnection;
-        public List<String> suggest;
 
         @Override
         protected String doInBackground(String... key) {
@@ -170,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                         /*Log.d("Symbol", row.getString("Symbol"));
                         Log.d("Name", row.getString("Name"));
                         Log.d("Exchange", row.getString("Exchange"));*/
-                        Stock SuggestKey;
                         suggest.add(new Stock(row.getString("Symbol"), row.getString("Name"), row.getString("Exchange")));
                     } catch (JSONException e) {
                         // Oops

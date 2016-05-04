@@ -21,7 +21,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +52,7 @@ public class ResultActivity extends AppCompatActivity {
 
         /* get Intent which is the company's symbol */
         Intent intent = getIntent();
-        String stockSymbol = intent.getStringExtra("symbol");
+        final String stockSymbol = intent.getStringExtra("symbol");
 //        TextView tv = (TextView) findViewById(R.id.textView3);
 //        tv.setText(stockSymbol);
         Log.d("Received symbol", "onCreate: " + stockSymbol);
@@ -62,8 +72,8 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) populateStockDetailsListView();
-                if (tab.getPosition() == 1) loadHistoricalChartWebView();
+                if (tab.getPosition() == 0) new getStockDetailsJSON().execute(stockSymbol);
+                if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) populateNewsListView();
             }
 
@@ -71,8 +81,8 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabUnselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) populateStockDetailsListView();
-                if (tab.getPosition() == 1) loadHistoricalChartWebView();
+                if (tab.getPosition() == 0) new getStockDetailsJSON().execute(stockSymbol);
+                if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) populateNewsListView();
             }
 
@@ -80,14 +90,14 @@ public class ResultActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
 
-                if (tab.getPosition() == 0) populateStockDetailsListView();
-                if (tab.getPosition() == 1) loadHistoricalChartWebView();
+                if (tab.getPosition() == 0) new getStockDetailsJSON().execute(stockSymbol);
+                if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
                 if (tab.getPosition() == 2) populateNewsListView();
             }
         });
 
         /* populate Current Details ListView with stock details */
-//        populateStockDetailsListView();
+//        new getStockDetailsJSON().execute(stockSymbol);
 
 //        getList
     }
@@ -132,35 +142,6 @@ public class ResultActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void populateStockDetailsListView() {
-        /* Create a list of items */
-        final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
-
-        entries.add(new StockDetailsEntry("NAME", "name1", 0));
-        entries.add(new StockDetailsEntry("SYMBOL", "symbol1", 0));
-        entries.add(new StockDetailsEntry("LASTPRICE", "lastprice1", 0));
-        entries.add(new StockDetailsEntry("CHANGE", "change1", 0));
-        entries.add(new StockDetailsEntry("TIMESTAMP", "timestamp1", 0));
-        entries.add(new StockDetailsEntry("MARKETCAP", "marketcap1", 0));
-        entries.add(new StockDetailsEntry("VOLUME", "volume1", 0));
-        entries.add(new StockDetailsEntry("CHANGEYTD", "changeytd1", 0));
-        entries.add(new StockDetailsEntry("HIGH", "high1", 0));
-        entries.add(new StockDetailsEntry("LOW", "low1", 0));
-        entries.add(new StockDetailsEntry("OPEN", "open1", 0));
-
-        /* Build Adapter */
-        ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(this, entries);
-
-        /* Configure the list view */
-        NonScrollListView list = (NonScrollListView) findViewById(R.id.stockDetailsListView);
-        list.setAdapter(adapter);
-
-        /* show The Image in a ImageView */
-        ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
-        new DownloadImageTask(chartImageView)
-                .execute("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200");
-
-    }
     private void populateNewsListView() {
         /* Create a list of items */
 
@@ -186,13 +167,20 @@ public class ResultActivity extends AppCompatActivity {
         list.setAdapter(adapter);
     }
 
-    private void loadHistoricalChartWebView(){
+    private void loadHistoricalChartWebView(String stockSymbol){
         WebView browser = (WebView) findViewById(R.id.webView);
         /* set loading of images */
         browser.getSettings().setLoadsImagesAutomatically(true);
         /* enable JS */
         browser.getSettings().setJavaScriptEnabled(true);
-        String url = "file:///android_asset/historicalchart.html";
+        String url = null;
+
+        try {
+            url = "file:///android_asset/historicalchart.html?symbol=" +
+                          URLEncoder.encode(stockSymbol, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         browser.loadUrl(url);
     }
 
@@ -253,97 +241,114 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
-//    class getStockDetailsJson extends AsyncTask<String,String,String> {
-//
-//        HttpURLConnection urlConnection;
-//
-//        @Override
-//        protected String doInBackground(String... key) {
-//            String companySymbol = key[0];
-//            StringBuilder sb = new StringBuilder();
-//            String json_string = null;
-//
-//            try{
-//                /* ------------------ Loading string from server content ------------------------ */
-//                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol=TSLA"+companySymbol);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-//
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    sb.append(line);
-//                }
-//                json_string = sb.toString();
-//                /*Log.d("Info", result);*/
-//                /* ------------- Finished. String fully loaded from server response ------------- */
-//                Log.d("Result", sb.toString());
-//
-//                /* We receive a JSON object (not a JSON array), so we should create a JSONObject */
-//                JSONObject resultObject = new JSONObject(json_string);
-//                /*System.out.println("arr: " + Arrays.toString(array));*/
-//
-//                try {
-//                    resultObject.get("Name");
-//                    resultObject.get("Symbol");
-//                    resultObject.get("Last Price");
-//                    resultObject.get("Change (Change Percent)");
-//                    resultObject.get("Change Indicator");
-//                    resultObject.get("Time and Date");
-//                    resultObject.get("Market Cap");
-//                    resultObject.get("Volume");
-//                    resultObject.get("Change YTD (Change Percent YTD)");
-//                    resultObject.get("Change YTD Indicator");
-//                    resultObject.get("High");
-//                    resultObject.get("Low");
-//                    resultObject.get("Open");
-//                } catch (JSONException e) {
-//                    // Oops
-//                    e.printStackTrace();
-//                }
-//
-//                /*for (int i = 0; i < array.length(); i++) {
-//                    try{
-//                        JSONObject row = array.getJSONObject(i);
-//
-//                        *//*Log.d("Symbol", row.getString("Symbol"));
-//                        Log.d("Name", row.getString("Name"));
-//                        Log.d("Exchange", row.getString("Exchange"));*//*
-//                        Stock SuggestKey;
-//                        suggest.add(new Stock(row.getString("Symbol"), row.getString("Name"), row.getString("Exchange")));
-//                    } catch (JSONException e) {
-//                        // Oops
-//                        e.printStackTrace();
-//                    }
-//                }*/
-//
-//                /*
-//                JSONArray jArray = new JSONArray(sb);
-//                for(int i=0;i<jArray.getJSONArray(1).length();i++){
-//
-//                }*/
-//
-//            }catch(Exception e){
-//                Log.w("Error", e.getMessage());
-//            }finally {
-//                urlConnection.disconnect();
-//            }
-//
-//            runOnUiThread(new Runnable(){
-//                public void run(){
-//                    /* populate Stock Details ListView */
-//
-///*                    ArrayAdapter<Stock> aAdapter = new ArrayAdapter<MainActivity.Stock>(getApplicationContext(),R.layout.item, suggest);
-////                    aAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.item,suggest);
-//                    *//*autoCompleteTextView.setThreshold(3); *//**//* wait for 3 characters to show suggestions or hints *//*
-//                    autoCompleteTextView.setAdapter(aAdapter);
-//                    aAdapter.notifyDataSetChanged();*/
-//                }
-//            });
-//            return null;
-//        }
-//    }
+    class getStockDetailsJSON extends AsyncTask<String,String,String> {
 
+        HttpURLConnection urlConnection;
 
+        @Override
+        protected String doInBackground(String... key) {
+            String companySymbol = key[0];
+            StringBuilder sb = new StringBuilder();
+            String json_string = null;
+            final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
+
+            try{
+                /* ------------------ Loading string from server content ------------------------ */
+                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol="+companySymbol);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                json_string = sb.toString();
+                /*Log.d("Info", result);*/
+                /* ------------- Finished. String fully loaded from server response ------------- */
+                Log.d("Result", sb.toString());
+
+                /* We receive a JSON object (not a JSON array), so we should create a JSONObject */
+                JSONObject resultObject = new JSONObject(json_string);
+                /*System.out.println("arr: " + Arrays.toString(array));*/
+
+                try {
+                    /* Create a list of items */
+                    entries.add(new StockDetailsEntry("NAME", resultObject.get("Name").toString(), 0));
+                    entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
+                    entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
+                    entries.add(new StockDetailsEntry("CHANGE", resultObject.get("Change (Change Percent)").toString(), 0));
+                    entries.add(new StockDetailsEntry("TIMESTAMP", resultObject.get("Time and Date").toString(), 0));
+                    entries.add(new StockDetailsEntry("MARKETCAP", resultObject.get("Market Cap").toString(), 0));
+                    entries.add(new StockDetailsEntry("VOLUME", resultObject.get("Volume").toString(), 0));
+                    entries.add(new StockDetailsEntry("CHANGEYTD", resultObject.get("Change YTD (Change Percent YTD)").toString(), 0));
+                    entries.add(new StockDetailsEntry("HIGH", resultObject.get("High").toString(), 0));
+                    entries.add(new StockDetailsEntry("LOW", resultObject.get("Low").toString(), 0));
+                    entries.add(new StockDetailsEntry("OPEN", resultObject.get("Open").toString(), 0));
+//                    Log.d("Name", resultObject.get("Name").toString());
+//                    Log.d("Symbol", resultObject.get("Symbol").toString());
+//                    Log.d("Last Price", resultObject.get("Last Price").toString());
+//                    Log.d("Change (Change Percent)", resultObject.get("Change (Change Percent)").toString());
+//                    Log.d("Change Indicator", resultObject.get("Change Indicator").toString());
+//                    Log.d("Time and Date", resultObject.get("Time and Date").toString());
+//                    Log.d("Market Cap", resultObject.get("Market Cap").toString());
+//                    Log.d("Volume", resultObject.get("Volume").toString());
+//                    Log.d("ChangeYTD", resultObject.get("Change YTD (Change Percent YTD)").toString());
+//                    Log.d("Change YTD Indicator", resultObject.get("Change YTD Indicator").toString());
+//                    Log.d("High", resultObject.get("High").toString());
+//                    Log.d("Low", resultObject.get("Low").toString());
+//                    Log.d("Open", resultObject.get("Open").toString());
+
+                } catch (JSONException e) {
+                    // Oops
+                    e.printStackTrace();
+                }
+
+                /*for (int i = 0; i < array.length(); i++) {
+                    try{
+                        JSONObject row = array.getJSONObject(i);
+
+                        *//*Log.d("Symbol", row.getString("Symbol"));
+                        Log.d("Name", row.getString("Name"));
+                        Log.d("Exchange", row.getString("Exchange"));*//*
+                        Stock SuggestKey;
+                        suggest.add(new Stock(row.getString("Symbol"), row.getString("Name"), row.getString("Exchange")));
+                    } catch (JSONException e) {
+                        // Oops
+                        e.printStackTrace();
+                    }
+                }*/
+
+                /*
+                JSONArray jArray = new JSONArray(sb);
+                for(int i=0;i<jArray.getJSONArray(1).length();i++){
+
+                }*/
+
+            }catch(Exception e){
+                Log.w("Error", e.getMessage());
+            }finally {
+                urlConnection.disconnect();
+            }
+
+            runOnUiThread(new Runnable(){
+                public void run(){
+                    /* populate Stock Details ListView */
+                    /* Build Adapter */
+                    ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(ResultActivity.this, entries);
+
+                    /* Configure the list view */
+                    NonScrollListView list = (NonScrollListView) findViewById(R.id.stockDetailsListView);
+                    list.setAdapter(adapter);
+
+                    /* show The Image in a ImageView */
+                    ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
+                    new DownloadImageTask(chartImageView)
+                            .execute("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200");
+                }
+            });
+            return null;
+        }
+    }
 }
