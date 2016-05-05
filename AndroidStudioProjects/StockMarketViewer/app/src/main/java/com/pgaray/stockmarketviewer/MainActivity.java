@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* Add favorites to favorite entries list */
         for (int i = 0; i < favoriteList.length; i++) {
-            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Loading...", "", "...", ""));
+            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Loading...", "", "", 0, ""));
         }
 
 //        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
@@ -443,7 +443,8 @@ public class MainActivity extends AppCompatActivity {
                     name = resultObject.get("Name").toString();
                     symbol = resultObject.get("Symbol").toString();
                     stockValue = resultObject.get("Last Price").toString();
-                    changePercent = resultObject.get("Change (Change Percent)").toString();
+                    String completeString = resultObject.get("Change (Change Percent)").toString();
+                    changePercent = completeString.substring(completeString.indexOf("(") + 1, completeString.indexOf(")"));
                     changeIndicator = (int) resultObject.get("Change Indicator");
                     marketCap = resultObject.get("Market Cap").toString();
 
@@ -461,7 +462,8 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable(){
                 public void run(){
                     /* Set new values */
-                    singleItem.setFavoriteEntry(symbol, name, stockValue, changePercent, "Market Cap: " + marketCap);
+                    singleItem.setFavoriteEntry(symbol, name, stockValue, changePercent,
+                                                changeIndicator, "Market Cap: " + marketCap);
 
                     /* IMPORTANT!!!!! Notify that data has changed */
                     adapter.notifyDataSetChanged();
