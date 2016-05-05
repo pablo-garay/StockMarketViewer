@@ -17,7 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
@@ -137,12 +137,111 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getQuote(String symbol){
-        Intent intent = new Intent(this, ResultActivity.class);
-        intent.putExtra("symbol", symbol);
-        startActivity(intent);
+
+        new stockDataGetter().execute(symbol);
 
         /*String message = "You selected: " + symbol;
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();*/
+    }
+
+
+    class stockDataGetter extends AsyncTask<String,String,String> {
+        HttpURLConnection urlConnection;
+        boolean validationError = false;
+        String companySymbol;
+
+        @Override
+        protected String doInBackground(String... key) {
+            companySymbol = key[0];
+            StringBuilder sb = new StringBuilder();
+            String json_string = null;
+
+            try{
+                /* ------------------ Loading string from server content ------------------------ */
+                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol="+companySymbol);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                json_string = sb.toString();
+                /*Log.d("Info", result);*/
+                /* ------------- Finished. String fully loaded from server response ------------- */
+                Log.d("Result", sb.toString());
+
+                /* We receive a JSON object (not a JSON array), so we should create a JSONObject */
+                JSONObject resultObject = new JSONObject(json_string);
+                /*System.out.println("arr: " + Arrays.toString(array));*/
+
+                try {
+                    String errorStr = resultObject.get("Error").toString();
+                    validationError = true;
+
+                } catch (NullPointerException e){
+                    validationError = false;
+                }
+
+//                try {
+//                    /* Create a list of items */
+////                    entries.add(new StockDetailsEntry("NAME", resultObject.get("Name").toString(), 0));
+////                    entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
+////                    entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
+////                    entries.add(new StockDetailsEntry("CHANGE",
+////                            resultObject.get("Change (Change Percent)").toString(), (int) resultObject.get("Change Indicator")));
+////                    entries.add(new StockDetailsEntry("TIMESTAMP", resultObject.get("Time and Date").toString(), 0));
+////                    entries.add(new StockDetailsEntry("MARKETCAP", resultObject.get("Market Cap").toString(), 0));
+////                    entries.add(new StockDetailsEntry("VOLUME", resultObject.get("Volume").toString(), 0));
+////                    entries.add(new StockDetailsEntry("CHANGEYTD",
+////                            resultObject.get("Change YTD (Change Percent YTD)").toString(),
+////                            (int) resultObject.get("Change YTD Indicator")));
+////                    entries.add(new StockDetailsEntry("HIGH", resultObject.get("High").toString(), 0));
+////                    entries.add(new StockDetailsEntry("LOW", resultObject.get("Low").toString(), 0));
+////                    entries.add(new StockDetailsEntry("OPEN", resultObject.get("Open").toString(), 0));
+////                    Log.d("Name", resultObject.get("Name").toString());
+////                    Log.d("Symbol", resultObject.get("Symbol").toString());
+////                    Log.d("Last Price", resultObject.get("Last Price").toString());
+////                    Log.d("Change (Change Percent)", resultObject.get("Change (Change Percent)").toString());
+////                    Log.d("Change Indicator", resultObject.get("Change Indicator").toString());
+////                    Log.d("Time and Date", resultObject.get("Time and Date").toString());
+////                    Log.d("Market Cap", resultObject.get("Market Cap").toString());
+////                    Log.d("Volume", resultObject.get("Volume").toString());
+////                    Log.d("ChangeYTD", resultObject.get("Change YTD (Change Percent YTD)").toString());
+////                    Log.d("Change YTD Indicator", resultObject.get("Change YTD Indicator").toString());
+////                    Log.d("High", resultObject.get("High").toString());
+////                    Log.d("Low", resultObject.get("Low").toString());
+////                    Log.d("Open", resultObject.get("Open").toString());
+//
+//                } catch (JSONException e) {
+//                    // Oops
+//                    e.printStackTrace();
+//                }
+
+            }catch(Exception e){
+                Log.w("Error", e.getMessage());
+            }finally {
+                urlConnection.disconnect();
+            }
+
+            runOnUiThread(new Runnable(){
+                public void run(){
+                    if (validationError){
+                        Toast.makeText(MainActivity.this,
+                                "Failed to fetch data for symbol provided",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        /*Toast.makeText(MainActivity.this, "No Error: Data fetched", Toast.LENGTH_LONG).show();*/
+                        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+                        intent.putExtra("symbol", companySymbol);
+                        startActivity(intent);
+                    }
+                }
+            });
+            return null;
+        }
     }
 
     class autocompleteTextViewFiller extends AsyncTask<String,String,String>{
@@ -269,6 +368,16 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
         mDynamicListView.setAdapter(adapter);
+
+        /* on select favorite, show Stock details functionality */
+        mDynamicListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                FavoriteEntry singleItem = (FavoriteEntry) adapter.getItemAtPosition(position);
+                /* get Quote from retrieved Symbol from item */
+                getQuote(singleItem.getFavoriteSymbol());
+            }
+        });
     }
 
 

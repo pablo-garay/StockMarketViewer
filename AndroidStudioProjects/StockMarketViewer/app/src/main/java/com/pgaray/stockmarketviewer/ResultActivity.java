@@ -1,6 +1,5 @@
 package com.pgaray.stockmarketviewer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
-import com.facebook.FacebookDialog;
 import com.facebook.FacebookException;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
@@ -79,8 +77,6 @@ public class ResultActivity extends AppCompatActivity {
 //        tv.setText(stockSymbol);
         Log.d("Received symbol", "onCreate: " + stockSymbol);
 
-        /* change actionbar title */
-        setTitle("Facebook, Inc.");
 
         /* the following creates a ViewPager with the 3 tabs */
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -300,6 +296,7 @@ public class ResultActivity extends AppCompatActivity {
 
     class StockDetailsFragmentFiller extends AsyncTask<String,String,String> {
         HttpURLConnection urlConnection;
+        String companyName = "";
 
         @Override
         protected String doInBackground(String... key) {
@@ -307,7 +304,6 @@ public class ResultActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
             String json_string = null;
             final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
-            int val;
 
             try{
                 /* ------------------ Loading string from server content ------------------------ */
@@ -332,7 +328,8 @@ public class ResultActivity extends AppCompatActivity {
 
                 try {
                     /* Create a list of items */
-                    entries.add(new StockDetailsEntry("NAME", resultObject.get("Name").toString(), 0));
+                    companyName = resultObject.get("Name").toString();
+                    entries.add(new StockDetailsEntry("NAME", companyName, 0));
                     entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
                     entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
                     entries.add(new StockDetailsEntry("CHANGE",
@@ -373,6 +370,9 @@ public class ResultActivity extends AppCompatActivity {
 
             runOnUiThread(new Runnable(){
                 public void run(){
+                    /* change actionbar title */
+                    setTitle(companyName);
+
                     /* populate Stock Details ListView */
                     /* Build Adapter */
                     ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(ResultActivity.this, entries);
