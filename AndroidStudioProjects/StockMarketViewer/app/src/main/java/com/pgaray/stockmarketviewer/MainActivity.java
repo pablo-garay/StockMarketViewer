@@ -17,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -467,6 +469,10 @@ public class MainActivity extends AppCompatActivity {
 
                     /* IMPORTANT!!!!! Notify that data has changed */
                     adapter.notifyDataSetChanged();
+
+                    /* resize Favorite ListView according to updated content */
+                    ListView favoriteListView = (DynamicNonScrollListView) findViewById(R.id.favoritesListView);
+                    justifyListViewHeightBasedOnChildren(favoriteListView);
                 }
             });
             return null;
@@ -474,4 +480,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void justifyListViewHeightBasedOnChildren (ListView listView) {
+
+        ListAdapter adapter = listView.getAdapter();
+
+        if (adapter == null) {
+            return;
+        }
+        ViewGroup vg = listView;
+        int totalHeight = 0;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, vg);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams par = listView.getLayoutParams();
+        par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(par);
+        listView.requestLayout();
+    }
 }
