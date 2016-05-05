@@ -1,11 +1,13 @@
 package com.pgaray.stockmarketviewer;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -371,12 +373,36 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(@NonNull final ViewGroup listView, @NonNull final int[] reverseSortedPositions) {
                         for (int position : reverseSortedPositions) {
-                            favoritesListViewAdapter.remove(favoritesListViewAdapter.getItem(position));
+                            /* get item dismissed */
+                            final FavoriteEntry dismissedItem = favoritesListViewAdapter.getItem(position);
+
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("Confirm deletion")
+                                    .setMessage("Do you really want to delete " + dismissedItem.getFavoriteName() + " from Favorites?")
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            /* User pressed confirmation button, so delete */
+                                            /*Toast.makeText(MainActivity.this, "Yaay", Toast.LENGTH_SHORT).show();*/
+
+                                            /* remove favorite from SharedPreferences*/
+                                            FavoriteList.removeFavoriteFromList(MainActivity.this, dismissedItem.getFavoriteSymbol());
+                                            /* remove favorite from ListView */
+                                            favoritesListViewAdapter.remove(dismissedItem);
+
+                                            /* resize Favorite ListView according to updated content */
+                                            resizeFavoriteListView();
+                                        }})
+                                    .setNegativeButton(android.R.string.no, null).show();
                         }
                     }
                 }
         );
         mDynamicListView.setAdapter(favoritesListViewAdapter);
+
+        /* resize Favorite ListView according to updated content */
+        resizeFavoriteListView();
 
         /* on select favorite, show Stock details functionality */
         mDynamicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -484,12 +510,17 @@ public class MainActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
 
                     /* resize Favorite ListView according to updated content */
-                    ListView favoriteListView = (DynamicNonScrollListView) findViewById(R.id.favoritesListView);
-                    justifyListViewHeightBasedOnChildren(favoriteListView);
+                    resizeFavoriteListView();
                 }
             });
             return null;
         }
+    }
+
+    private void resizeFavoriteListView(){
+        /* get favorite listview and pass it to function to resize */
+        ListView favoriteListView = (DynamicNonScrollListView) findViewById(R.id.favoritesListView);
+        justifyListViewHeightBasedOnChildren(favoriteListView);
     }
 
 
