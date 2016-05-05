@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -18,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.facebook.FacebookSdk;
+import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -249,11 +253,22 @@ public class MainActivity extends AppCompatActivity {
 //                        "+0.92%", "Market Cap: 609.80 Billion"));
 
         /* Build Adapter */
-        ArrayAdapter<FavoriteEntry> adapter = new FavoritesEntryAdapter(this, favoritesEntries);
+        final ArrayAdapter<FavoriteEntry> adapter = new FavoritesEntryAdapter(this, favoritesEntries);
 
         /* Configure the list view */
-        NonScrollListView list = (NonScrollListView) findViewById(R.id.favoritesListView);
-        list.setAdapter(adapter);
+        DynamicListView mDynamicListView = (DynamicListView) findViewById(R.id.favoritesListView);
+        /* Callback for Listview items removal using Swipe to Dismiss gesture */
+        mDynamicListView.enableSwipeToDismiss(
+                new OnDismissCallback() {
+                    @Override
+                    public void onDismiss(@NonNull final ViewGroup listView, @NonNull final int[] reverseSortedPositions) {
+                        for (int position : reverseSortedPositions) {
+                            adapter.remove(adapter.getItem(position)) ;
+                        }
+                    }
+                }
+        );
+        mDynamicListView.setAdapter(adapter);
     }
 
 

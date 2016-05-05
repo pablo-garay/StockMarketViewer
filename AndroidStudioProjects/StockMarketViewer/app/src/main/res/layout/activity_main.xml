@@ -106,7 +106,7 @@
                     android:layout_marginLeft="10dp" />
             </LinearLayout>
 
-            <com.pgaray.stockmarketviewer.NonScrollListView
+            <com.pgaray.stockmarketviewer.DynamicNonScrollListView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/favoritesListView"
