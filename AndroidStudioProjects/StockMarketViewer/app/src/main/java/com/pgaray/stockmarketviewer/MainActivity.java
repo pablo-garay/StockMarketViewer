@@ -1,6 +1,8 @@
 package com.pgaray.stockmarketviewer;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
-import com.facebook.share.widget.ShareDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pgaray.stockmarketviewer.FavoriteList.getFavoriteList;
 
 public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView autoCompleteTextView;
@@ -47,7 +48,10 @@ public class MainActivity extends AppCompatActivity {
         // especially, if you're using Facebook UI elements.
         setContentView(R.layout.activity_main);
 
-        /* set and show icon */
+        /* Get a Handle to SharedPreferences */
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
+        /* set and show icon in ActionBar */
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true); // set show icon = true
         actionBar.setIcon(R.drawable.stockmarket);
@@ -225,32 +229,39 @@ public class MainActivity extends AppCompatActivity {
         /* Create a list of items */
         final List<FavoriteEntry> favoritesEntries = new ArrayList<FavoriteEntry>();
 
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
-        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-                        "+0.92%", "Market Cap: 609.80 Billion"));
+        String[] favoriteList = getFavoriteList(MainActivity.this);
+
+        for (int i = 0; i < favoriteList.length; i++) {
+            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Apple Inc", "$ 109.99",
+                    "+0.92%", "Market Cap: 609.80 Billion"));
+        }
+
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
+//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
+//                        "+0.92%", "Market Cap: 609.80 Billion"));
 
         /* Build Adapter */
         ArrayAdapter<FavoriteEntry> adapter = new FavoritesEntryAdapter(this, favoritesEntries);

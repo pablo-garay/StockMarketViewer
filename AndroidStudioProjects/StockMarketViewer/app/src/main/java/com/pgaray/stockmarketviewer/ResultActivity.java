@@ -157,6 +157,7 @@ public class ResultActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        isFavorite = FavoriteList.isInFavoriteList(this, stockSymbol);
         /* show or hide Add and Remove Favorite buttons according to whether the element if favorite */
         menu.findItem(R.id.action_add_favorite).setVisible(!isFavorite);
         menu.findItem(R.id.action_remove_favorite).setVisible(isFavorite);
@@ -169,14 +170,16 @@ public class ResultActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.action_add_favorite:
-                isFavorite = true;
+                /*isFavorite = true;*/
+                FavoriteList.addToFavoriteList(this, stockSymbol);
                 /*updateFavorite();*/
                 supportInvalidateOptionsMenu();
                 Toast.makeText(ResultActivity.this, "Bookmarked Favorite", Toast.LENGTH_LONG).show();
                 return true;
 
             case R.id.action_remove_favorite:
-                isFavorite = false;
+                /*isFavorite = false;*/
+                FavoriteList.removeFavoriteFromList(this, stockSymbol);
                 /*updateFavorite();*/
                 supportInvalidateOptionsMenu();
                 /* DONT DISPLAY text when favorite removed as requested by client */
@@ -190,8 +193,7 @@ public class ResultActivity extends AppCompatActivity {
                             .setContentUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=" + stockSymbol + "&lang=en-US&width=1200&height=1200"))
                             .setContentTitle("Current Stock Price of Facebook, Inc., $ 123")
                             .setImageUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=" + stockSymbol + "&lang=en-US&width=1200&height=1200"))
-                            .setContentDescription(
-                                    "Stock Information of Facebook, Inc.")
+                            .setContentDescription("Stock Information of Facebook, Inc.")
                             .build();
 
                     shareDialog.show(linkContent /*, ShareDialog.Mode*/); /* Show Facebook Share Dialog */
