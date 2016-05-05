@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView autoCompleteTextView;
     //    public String data;
     public ArrayAdapter<String> aAdapter;
+    private ArrayAdapter<FavoriteEntry> favoritesListViewAdapter;
 
     /**
      * Called when the activity is first created.
@@ -133,6 +135,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("Get Quote", "onClick: " + autoCompleteTextView.getText().toString());
                 getQuote(autoCompleteTextView.getText().toString());
+            }
+        });
+
+        /* Refresh imageButton functionality */
+        ImageButton imageButton = (ImageButton) findViewById(R.id.refreshImageButton);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Toast.makeText(MainActivity.this, "Clicked Refresh Button!", Toast.LENGTH_LONG).show();*/
+
+                refreshFavoriteListView(favoritesListViewAdapter);
             }
         });
 
@@ -348,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
 //                "+0.92%", "Market Cap: 609.80 Billion"));
 
         /* Build Adapter */
-        final ArrayAdapter<FavoriteEntry> adapter = new FavoritesEntryAdapter(this, favoritesEntries);
+        favoritesListViewAdapter = new FavoritesEntryAdapter(this, favoritesEntries);
 
         /* Configure the list view */
         DynamicListView mDynamicListView = (DynamicListView) findViewById(R.id.favoritesListView);
@@ -358,12 +371,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(@NonNull final ViewGroup listView, @NonNull final int[] reverseSortedPositions) {
                         for (int position : reverseSortedPositions) {
-                            adapter.remove(adapter.getItem(position));
+                            favoritesListViewAdapter.remove(favoritesListViewAdapter.getItem(position));
                         }
                     }
                 }
         );
-        mDynamicListView.setAdapter(adapter);
+        mDynamicListView.setAdapter(favoritesListViewAdapter);
 
         /* on select favorite, show Stock details functionality */
         mDynamicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -376,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* refresh with fresh data from API */
-        refreshFavoriteListView(adapter);
+        refreshFavoriteListView(favoritesListViewAdapter);
     }
 
     private void refreshFavoriteListView(ArrayAdapter<FavoriteEntry> adapter) {

@@ -97,7 +97,7 @@
                 <ImageButton
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:id="@+id/imageButton"
+                    android:id="@+id/refreshImageButton"
                     android:src="@drawable/refresh_128"
                     android:background="@android:color/transparent"
                     android:scaleType="fitXY"
