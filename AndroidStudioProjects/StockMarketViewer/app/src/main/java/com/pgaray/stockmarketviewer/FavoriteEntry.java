@@ -5,11 +5,11 @@ package com.pgaray.stockmarketviewer;
  */
 public final class FavoriteEntry {
 
-    private final String symbol;
-    private final String name;
-    private final String stockValue;
-    private final String changePercent;
-    private final String marketCap;
+    private String symbol;
+    private String name;
+    private String stockValue;
+    private String changePercent;
+    private String marketCap;
 
     public FavoriteEntry(final String symbol, final String name,
                          final String stockValue, final String changePercent, final String marketCap) {
@@ -43,4 +43,14 @@ public final class FavoriteEntry {
      * @return change of favorites entry
      */
     public String getFavoriteMarketCap() { return marketCap; }
+
+    /* SETTER */
+    public void setFavoriteEntry(final String symbol, final String name,final String stockValue,
+                                 final String changePercent, final String marketCap){
+        this.symbol = symbol;
+        this.name = name;
+        this.stockValue = stockValue;
+        this.changePercent = changePercent;
+        this.marketCap = marketCap;
+    }
 }

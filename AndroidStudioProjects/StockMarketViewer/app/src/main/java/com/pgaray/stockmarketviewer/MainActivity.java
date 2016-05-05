@@ -40,10 +40,12 @@ import static com.pgaray.stockmarketviewer.FavoriteList.getFavoriteList;
 
 public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView autoCompleteTextView;
-//    public String data;
+    //    public String data;
     public ArrayAdapter<String> aAdapter;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         autoCompleteTextView.setAdapter(adapter);
         /*suggest = new ArrayList<String>();*/
 
-        final TextWatcher textWatcher = new TextWatcher(){
+        final TextWatcher textWatcher = new TextWatcher() {
             public void afterTextChanged(Editable editable) {
                 // TODO Auto-generated method stub
 
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // Your code for a general case (suggest valid options to select)
-                if (newText.length() >= 3){
+                if (newText.length() >= 3) {
                     /*Log.d("InputString", newText);*/
                     new autocompleteTextViewFiller().execute(newText);
                 }
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long rowId) {
-                Stock selection = (Stock)parent.getItemAtPosition(position);
+                Stock selection = (Stock) parent.getItemAtPosition(position);
                 //Do something with the selected text
                 /*Log.d("ItemSelected", "You selected: " + selection.symbol);*/
                 /* Remove autoCompleteTextView's textWatcher so that we can change its
@@ -112,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
         /* ------------------ End AutoComplete feature ---------------------------*/
 
         /* Clear button functionality */
-        Button clearButton = (Button) findViewById(R.id.clearButton );
-        clearButton.setOnClickListener( new View.OnClickListener() {
+        Button clearButton = (Button) findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* Get Quote button functionality */
         Button getQuoteButton = (Button) findViewById(R.id.getQuoteButton);
-        getQuoteButton.setOnClickListener( new View.OnClickListener() {
+        getQuoteButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         populateFavoritesListView();
     }
 
-    private void getQuote(String symbol){
+    private void getQuote(String symbol) {
 
         new stockDataGetter().execute(symbol);
 
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    class stockDataGetter extends AsyncTask<String,String,String> {
+    class stockDataGetter extends AsyncTask<String, String, String> {
         HttpURLConnection urlConnection;
         boolean validationError = false;
         String companySymbol;
@@ -156,9 +158,9 @@ public class MainActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
             String json_string = null;
 
-            try{
+            try {
                 /* ------------------ Loading string from server content ------------------------ */
-                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol="+companySymbol);
+                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol=" + companySymbol);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     String errorStr = resultObject.get("Error").toString();
                     validationError = true;
 
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     validationError = false;
                 }
 
@@ -220,15 +222,15 @@ public class MainActivity extends AppCompatActivity {
 //                    e.printStackTrace();
 //                }
 
-            }catch(Exception e){
+            } catch (Exception e) {
                 Log.w("Error", e.getMessage());
-            }finally {
+            } finally {
                 urlConnection.disconnect();
             }
 
-            runOnUiThread(new Runnable(){
-                public void run(){
-                    if (validationError){
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if (validationError) {
                         Toast.makeText(MainActivity.this,
                                 "Failed to fetch data for symbol provided",
                                 Toast.LENGTH_LONG).show();
@@ -244,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class autocompleteTextViewFiller extends AsyncTask<String,String,String>{
+    class autocompleteTextViewFiller extends AsyncTask<String, String, String> {
         HttpURLConnection urlConnection;
 
         @Override
@@ -252,11 +254,11 @@ public class MainActivity extends AppCompatActivity {
             String newText = key[0];
             StringBuilder sb = new StringBuilder();
             String json_string = null;
-            final ArrayList<Stock> suggest= new ArrayList<MainActivity.Stock>();
+            final ArrayList<Stock> suggest = new ArrayList<MainActivity.Stock>();
 
-            try{
+            try {
                  /* ------------------ Loading string from server stream ------------------------ */
-                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?input="+newText);
+                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?input=" + newText);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
@@ -275,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONArray array = new JSONArray(json_string);
                 /*System.out.println("arr: " + Arrays.toString(array));*/
                 for (int i = 0; i < array.length(); i++) {
-                    try{
+                    try {
                         JSONObject row = array.getJSONObject(i);
 
                         /*Log.d("Symbol", row.getString("Symbol"));
@@ -294,14 +296,14 @@ public class MainActivity extends AppCompatActivity {
 
                 }*/
 
-            }catch(Exception e){
+            } catch (Exception e) {
                 Log.w("Error", e.getMessage());
-            }finally {
+            } finally {
                 urlConnection.disconnect();
             }
 
-            runOnUiThread(new Runnable(){
-                public void run(){
+            runOnUiThread(new Runnable() {
+                public void run() {
                     ArrayAdapter<Stock> aAdapter = new ArrayAdapter<MainActivity.Stock>(getApplicationContext(),
                             R.layout.autocomplete_item, suggest);
 //                    aAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.item,suggest);
@@ -335,21 +337,13 @@ public class MainActivity extends AppCompatActivity {
 
         String[] favoriteList = getFavoriteList(MainActivity.this);
 
+        /* Add favorites to favorite entries list */
         for (int i = 0; i < favoriteList.length; i++) {
-            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Loading...", "Loading...",
-                    "Loading...", "Loading..."));
+            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Loading...", "", "...", ""));
         }
 
 //        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
 //                "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
 
         /* Build Adapter */
         final ArrayAdapter<FavoriteEntry> adapter = new FavoritesEntryAdapter(this, favoritesEntries);
@@ -362,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(@NonNull final ViewGroup listView, @NonNull final int[] reverseSortedPositions) {
                         for (int position : reverseSortedPositions) {
-                            adapter.remove(adapter.getItem(position)) ;
+                            adapter.remove(adapter.getItem(position));
                         }
                     }
                 }
@@ -370,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
         mDynamicListView.setAdapter(adapter);
 
         /* on select favorite, show Stock details functionality */
-        mDynamicListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        mDynamicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 FavoriteEntry singleItem = (FavoriteEntry) adapter.getItemAtPosition(position);
@@ -378,80 +372,104 @@ public class MainActivity extends AppCompatActivity {
                 getQuote(singleItem.getFavoriteSymbol());
             }
         });
+
+        /* refresh with fresh data from API */
+        refreshFavoriteListView(adapter);
+    }
+
+    private void refreshFavoriteListView(ArrayAdapter<FavoriteEntry> adapter) {
+        for (int position = 0; position < adapter.getCount(); position++) {
+
+            FavoriteEntry singleItem = adapter.getItem(position);
+            new StockDetailsFragmentFiller().execute(new MyTaskParams(singleItem, adapter));
+        }
+    }
+
+    private class MyTaskParams {
+        FavoriteEntry singleItem;
+        ArrayAdapter<FavoriteEntry> adapter;
+
+        MyTaskParams(FavoriteEntry singleItem, ArrayAdapter<FavoriteEntry> adapter) {
+            this.singleItem = singleItem;
+            this.adapter = adapter;
+        }
     }
 
 
-//    class FavoriteListViewFiller extends AsyncTask<String,String,String> {
-//        HttpURLConnection urlConnection;
-//
-//        @Override
-//        protected String doInBackground(String... key) {
-//            final String companySymbol = key[0];
-//            StringBuilder sb = new StringBuilder();
-//            String json_string = null;
-//            final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
-//            int val;
-//
-//            try{
-//                /* ------------------ Loading string from server content ------------------------ */
-//                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol="+companySymbol);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-//
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    sb.append(line);
-//                }
-//                json_string = sb.toString();
-//                /*Log.d("Info", result);*/
-//                /* ------------- Finished. String fully loaded from server response ------------- */
-//                Log.d("Result", sb.toString());
-//
-//                /* We receive a JSON object (not a JSON array), so we should create a JSONObject */
-//                JSONObject resultObject = new JSONObject(json_string);
-//                /*System.out.println("arr: " + Arrays.toString(array));*/
-//
-//                try {
-//                    favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Apple Inc", "$ 109.99",
-//                            "+0.92%", "Market Cap: 609.80 Billion"));
-//                    /* Create a list of items */
-//                    entries.add(new StockDetailsEntry("NAME", resultObject.get("Name").toString(), 0));
-//                    entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
-//                    entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
-//                    entries.add(new StockDetailsEntry("CHANGE",
-//                            resultObject.get("Change (Change Percent)").toString(), (int) resultObject.get("Change Indicator")));
-//                    entries.add(new StockDetailsEntry("MARKETCAP", resultObject.get("Market Cap").toString(), 0));
-//
-//                } catch (JSONException e) {
-//                    // Oops
-//                    e.printStackTrace();
-//                }
-//
-//            }catch(Exception e){
-//                Log.w("Error", e.getMessage());
-//            }finally {
-//                urlConnection.disconnect();
-//            }
-//
-//            runOnUiThread(new Runnable(){
-//                public void run(){
-//                    /* populate Stock Details ListView */
-//                    /* Build Adapter */
-//                    ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(ResultActivity.this, entries);
-//
-//                    /* Configure the list view */
-//                    NonScrollListView list = (NonScrollListView) findViewById(R.id.stockDetailsListView);
-//                    list.setAdapter(adapter);
-//
-//                    /* show Image in a ImageView */
-//                    ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
-//                    new DownloadImageTask(chartImageView)
-//                            .execute("http://chart.finance.yahoo.com/t?s=" + companySymbol + "&lang=en-US&width=1200&height=1200");
-//                }
-//            });
-//            return null;
-//        }
-//    }
+    class StockDetailsFragmentFiller extends AsyncTask<MyTaskParams,String,String> {
+        HttpURLConnection urlConnection;
+        private String name;
+        private String symbol;
+        private String stockValue;
+        private String changePercent;
+        private int changeIndicator;
+        private String marketCap;
+
+        @Override
+        protected String doInBackground(MyTaskParams... params) {
+            /* retrieve data from parameters passed */
+            final FavoriteEntry singleItem = params[0].singleItem;
+            final ArrayAdapter adapter = params[0].adapter;
+            String companySymbol = singleItem.getFavoriteSymbol();
+            /* End of making order here */
+
+            StringBuilder sb = new StringBuilder();
+            String json_string = null;
+            final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
+
+            try{
+                /* ------------------ Loading string from server content ------------------------ */
+                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol="+companySymbol);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                json_string = sb.toString();
+                /*Log.d("Info", result);*/
+                /* ------------- Finished. String fully loaded from server response ------------- */
+                Log.d("Result", sb.toString());
+
+                /* We receive a JSON object (not a JSON array), so we should create a JSONObject */
+                JSONObject resultObject = new JSONObject(json_string);
+                /*System.out.println("arr: " + Arrays.toString(array));*/
+
+                /* retrieve data to update content of Favorite */
+                try {
+                    name = resultObject.get("Name").toString();
+                    symbol = resultObject.get("Symbol").toString();
+                    stockValue = resultObject.get("Last Price").toString();
+                    changePercent = resultObject.get("Change (Change Percent)").toString();
+                    changeIndicator = (int) resultObject.get("Change Indicator");
+                    marketCap = resultObject.get("Market Cap").toString();
+
+                } catch (JSONException e) {
+                    // Oops
+                    e.printStackTrace();
+                }
+
+            }catch(Exception e){
+                Log.w("Error", e.getMessage());
+            }finally {
+                urlConnection.disconnect();
+            }
+
+            runOnUiThread(new Runnable(){
+                public void run(){
+                    /* Set new values */
+                    singleItem.setFavoriteEntry(symbol, name, stockValue, changePercent, "Market Cap: " + marketCap);
+
+                    /* IMPORTANT!!!!! Notify that data has changed */
+                    adapter.notifyDataSetChanged();
+                }
+            });
+            return null;
+        }
+    }
+
+
 }

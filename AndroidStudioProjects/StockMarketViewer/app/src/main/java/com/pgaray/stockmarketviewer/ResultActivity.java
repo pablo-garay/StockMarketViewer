@@ -170,7 +170,7 @@ public class ResultActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.action_add_favorite:
                 /*isFavorite = true;*/
-                FavoriteList.addToFavoriteList(this, stockSymbol);
+                FavoriteList.addToFavoriteList(this, stockSymbol.toUpperCase());
                 /*updateFavorite();*/
                 supportInvalidateOptionsMenu();
                 Toast.makeText(ResultActivity.this, "Bookmarked Favorite", Toast.LENGTH_LONG).show();
