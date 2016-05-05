@@ -132,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("symbol", symbol);
         startActivity(intent);
 
-        String message = "You selected: " + symbol;
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+        /*String message = "You selected: " + symbol;
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();*/
     }
 
     class autocompleteTextViewFiller extends AsyncTask<String,String,String>{

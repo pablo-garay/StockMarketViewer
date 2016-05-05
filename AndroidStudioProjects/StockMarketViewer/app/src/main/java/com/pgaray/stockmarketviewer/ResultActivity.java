@@ -60,35 +60,8 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /* Facebook init */
-        callbackManager = CallbackManager.Factory.create();
-        shareDialog = new ShareDialog(this);
-        // this part is optional -- register callback to manage result after Share dialog
-        // user interaction is done
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-
-            @Override
-            public void onSuccess(Sharer.Result result) {
-                if (result.getPostId() != null){
-                    /* Content has been shared and posted */
-                    Toast.makeText(ResultActivity.this, "You shared this post", Toast.LENGTH_LONG).show();
-                } else {
-                    /* Not posted e.g. User hit cancel Button */
-                    Toast.makeText(ResultActivity.this, "Post not shared", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onCancel() {
-                /* User turned back from FB share offer page */
-                Toast.makeText(ResultActivity.this, "The post has not been shared", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Toast.makeText(ResultActivity.this, "Error while trying to share post", Toast.LENGTH_LONG).show();
-            }
-        });
+        /* Facebook init should be done right here at this place*/
+       init_facebook();
         /* End of Facebook init */
         setContentView(R.layout.activity_result);
 
@@ -117,35 +90,62 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-
-                if (tab.getPosition() == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
-                if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
-                if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
+                loadTabContent(tab.getPosition(), stockSymbol);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-
-                if (tab.getPosition() == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
-                if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
-                if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
+                loadTabContent(tab.getPosition(), stockSymbol);
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-
-                if (tab.getPosition() == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
-                if (tab.getPosition() == 1) loadHistoricalChartWebView(stockSymbol);
-                if (tab.getPosition() == 2) new NewsFeedListViewFiller().execute(stockSymbol);
+                loadTabContent(tab.getPosition(), stockSymbol);
             }
         });
 
-        /* populate Current Details ListView with stock details */
-//        new StockDetailsFragmentFiller().execute(stockSymbol);
+        /* After creating the tabs, set current tab */
+        TabLayout.Tab tab = tabLayout.getTabAt(0);
+        tab.select();
+    }
 
-//        getList
+    private void init_facebook() {
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+        // this part is optional -- register callback to manage result after Share dialog
+        // user interaction is done
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                if (result.getPostId() != null){
+                    /* Content has been shared and posted */
+                    Toast.makeText(ResultActivity.this, "You shared this post", Toast.LENGTH_LONG).show();
+                } else {
+                    /* Not posted e.g. User hit cancel Button */
+                    Toast.makeText(ResultActivity.this, "Post not shared", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                /* User turned back from FB share offer page */
+                Toast.makeText(ResultActivity.this, "The post has not been shared", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(ResultActivity.this, "Error while trying to share post", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void loadTabContent(int position, String stockSymbol){
+        if (position == 0) new StockDetailsFragmentFiller().execute(stockSymbol);
+        else if (position == 1) loadHistoricalChartWebView(stockSymbol);
+        else if (position == 2) new NewsFeedListViewFiller().execute(stockSymbol);
     }
 
     @Override
@@ -187,9 +187,9 @@ public class ResultActivity extends AppCompatActivity {
 
                 if (ShareDialog.canShow(ShareLinkContent.class)) {
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                            .setContentUrl(Uri.parse("http://dev.markitondemand.com/MODApis/"))
+                            .setContentUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=" + stockSymbol + "&lang=en-US&width=1200&height=1200"))
                             .setContentTitle("Current Stock Price of Facebook, Inc., $ 123")
-                            .setImageUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=AAPL&lang=en-US&width=1200&height=1200"))
+                            .setImageUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=" + stockSymbol + "&lang=en-US&width=1200&height=1200"))
                             .setContentDescription(
                                     "Stock Information of Facebook, Inc.")
                             .build();
