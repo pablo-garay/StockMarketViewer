@@ -41,7 +41,8 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/todayStockChartImageView" />
+                android:id="@+id/todayStockChartImageView"
+                android:clickable="true" />
         </LinearLayout>
     </ScrollView>
 

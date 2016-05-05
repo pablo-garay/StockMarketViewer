@@ -48,6 +48,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 public class ResultActivity extends AppCompatActivity {
 
     TabLayout tabLayout;
@@ -56,6 +58,7 @@ public class ResultActivity extends AppCompatActivity {
     private ShareDialog shareDialog;
     private CallbackManager callbackManager;
     private String stockSymbol;
+    private PhotoViewAttacher mAttacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -283,6 +286,15 @@ public class ResultActivity extends AppCompatActivity {
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+            // If you later call mImageView.setImageDrawable/setImageBitmap/setImageResource/etc then you just need to call
+            mAttacher.update();
+
+            /*bmImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ResultActivity.this, "Clicked imageview!", Toast.LENGTH_LONG).show();
+                }
+            });*/
         }
     }
 
@@ -371,6 +383,9 @@ public class ResultActivity extends AppCompatActivity {
 
                     /* show Image in a ImageView */
                     ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
+                    // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
+                    // (not needed unless you are going to change the drawable later)
+                    mAttacher = new PhotoViewAttacher(chartImageView);
                     new DownloadImageTask(chartImageView)
                             .execute("http://chart.finance.yahoo.com/t?s=" + companySymbol + "&lang=en-US&width=1200&height=1200");
                 }

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.facebook.FacebookSdk;
 
@@ -232,28 +233,12 @@ public class MainActivity extends AppCompatActivity {
         String[] favoriteList = getFavoriteList(MainActivity.this);
 
         for (int i = 0; i < favoriteList.length; i++) {
-            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Apple Inc", "$ 109.99",
-                    "+0.92%", "Market Cap: 609.80 Billion"));
+            favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Loading...", "Loading...",
+                    "Loading...", "Loading..."));
         }
 
 //        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
 //                "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
-//        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
-//                        "+0.92%", "Market Cap: 609.80 Billion"));
 //        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
 //                        "+0.92%", "Market Cap: 609.80 Billion"));
 //        favoritesEntries.add(new FavoriteEntry("AAPL", "Apple Inc", "$ 109.99",
@@ -271,8 +256,78 @@ public class MainActivity extends AppCompatActivity {
         list.setAdapter(adapter);
     }
 
-//    private class getStockSuggestions extends AsyncTask<Void, Void, String> {
-//        @Override
+
+//    class FavoriteListViewFiller extends AsyncTask<String,String,String> {
+//        HttpURLConnection urlConnection;
 //
+//        @Override
+//        protected String doInBackground(String... key) {
+//            final String companySymbol = key[0];
+//            StringBuilder sb = new StringBuilder();
+//            String json_string = null;
+//            final List<StockDetailsEntry> entries = new ArrayList<StockDetailsEntry>();
+//            int val;
+//
+//            try{
+//                /* ------------------ Loading string from server content ------------------------ */
+//                URL url = new URL("http://stockstats-1256.appspot.com/stockstatsapi/json?symbol="+companySymbol);
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+//
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    sb.append(line);
+//                }
+//                json_string = sb.toString();
+//                /*Log.d("Info", result);*/
+//                /* ------------- Finished. String fully loaded from server response ------------- */
+//                Log.d("Result", sb.toString());
+//
+//                /* We receive a JSON object (not a JSON array), so we should create a JSONObject */
+//                JSONObject resultObject = new JSONObject(json_string);
+//                /*System.out.println("arr: " + Arrays.toString(array));*/
+//
+//                try {
+//                    favoritesEntries.add(new FavoriteEntry(favoriteList[i], "Apple Inc", "$ 109.99",
+//                            "+0.92%", "Market Cap: 609.80 Billion"));
+//                    /* Create a list of items */
+//                    entries.add(new StockDetailsEntry("NAME", resultObject.get("Name").toString(), 0));
+//                    entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
+//                    entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
+//                    entries.add(new StockDetailsEntry("CHANGE",
+//                            resultObject.get("Change (Change Percent)").toString(), (int) resultObject.get("Change Indicator")));
+//                    entries.add(new StockDetailsEntry("MARKETCAP", resultObject.get("Market Cap").toString(), 0));
+//
+//                } catch (JSONException e) {
+//                    // Oops
+//                    e.printStackTrace();
+//                }
+//
+//            }catch(Exception e){
+//                Log.w("Error", e.getMessage());
+//            }finally {
+//                urlConnection.disconnect();
+//            }
+//
+//            runOnUiThread(new Runnable(){
+//                public void run(){
+//                    /* populate Stock Details ListView */
+//                    /* Build Adapter */
+//                    ArrayAdapter<StockDetailsEntry> adapter = new StockDetailAdapter(ResultActivity.this, entries);
+//
+//                    /* Configure the list view */
+//                    NonScrollListView list = (NonScrollListView) findViewById(R.id.stockDetailsListView);
+//                    list.setAdapter(adapter);
+//
+//                    /* show Image in a ImageView */
+//                    ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
+//                    new DownloadImageTask(chartImageView)
+//                            .execute("http://chart.finance.yahoo.com/t?s=" + companySymbol + "&lang=en-US&width=1200&height=1200");
+//                }
+//            });
+//            return null;
+//        }
 //    }
 }
