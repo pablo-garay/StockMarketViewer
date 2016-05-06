@@ -1,6 +1,7 @@
 package com.pgaray.stockmarketviewer;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -270,6 +271,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
+//        private ProgressDialog mProgressDialog;
 
         public DownloadImageTask(ImageView bmImage) {
             this.bmImage = bmImage;
@@ -288,6 +290,16 @@ public class ResultActivity extends AppCompatActivity {
             return imageBitmap;
         }
 
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            mProgressDialog = new ProgressDialog(ResultActivity.this);
+//            mProgressDialog.setMessage("Loading please wait....");
+//            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            mProgressDialog.setCancelable(false);
+//            mProgressDialog.show();
+//        }
+
         protected void onPostExecute(final Bitmap result) {
             bmImage.setImageBitmap(result);
             // If you later call mImageView.setImageDrawable/setImageBitmap/setImageResource/etc then you just need to call
@@ -301,6 +313,7 @@ public class ResultActivity extends AppCompatActivity {
                     showImage(result);
                 }
             });
+//            mProgressDialog.dismiss();
         }
     }
 
@@ -330,6 +343,7 @@ public class ResultActivity extends AppCompatActivity {
 
     class StockDetailsFragmentFiller extends AsyncTask<String,String,String> {
         HttpURLConnection urlConnection;
+        private ProgressDialog mProgressDialog;
 
         @Override
         protected String doInBackground(String... key) {
@@ -424,10 +438,27 @@ public class ResultActivity extends AppCompatActivity {
             });
             return null;
         }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressDialog = new ProgressDialog(ResultActivity.this);
+            mProgressDialog.setMessage("Loading please wait....");
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            mProgressDialog.dismiss();
+        }
     }
 
     class NewsFeedListViewFiller extends AsyncTask<String,String,String> {
         HttpURLConnection urlConnection;
+        private ProgressDialog mProgressDialog;
 
         @Override
         protected String doInBackground(String... key) {
@@ -517,5 +548,21 @@ public class ResultActivity extends AppCompatActivity {
             });
             return null;
         }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressDialog = new ProgressDialog(ResultActivity.this);
+            mProgressDialog.setMessage("Loading please wait....");
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            mProgressDialog.dismiss();
+        }        
     }
 }

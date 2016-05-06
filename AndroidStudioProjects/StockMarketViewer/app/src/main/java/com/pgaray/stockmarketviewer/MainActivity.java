@@ -23,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     //    public String data;
     public ArrayAdapter<String> aAdapter;
     private ArrayAdapter<FavoriteEntry> favoritesListViewAdapter;
+    private ProgressBar loadingProgress;
 
     /**
      * Called when the activity is first created.
@@ -157,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
 
         /* Autorefresh switch functionality */
         addAutoRefreshButtonFunctionality();
+
+        /* ProgressBar Indicator */
+        loadingProgress = (ProgressBar) findViewById(R.id.loadingProgressBar);
+        loadingProgress.setVisibility(View.INVISIBLE);
 
         /* Display Favorites in ListView */
         populateFavoritesListView();
@@ -363,6 +369,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingProgress.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            loadingProgress.setVisibility(View.INVISIBLE);
+            super.onPostExecute(s);
         }
     }
 
