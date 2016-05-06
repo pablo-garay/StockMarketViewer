@@ -19,9 +19,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -40,6 +42,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.pgaray.stockmarketviewer.FavoriteList.getFavoriteList;
 
@@ -151,8 +155,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /* Autorefresh switch functionality */
+        addAutoRefreshButtonFunctionality();
+
         /* Display Favorites in ListView */
         populateFavoritesListView();
+    }
+
+    private void addAutoRefreshButtonFunctionality() {
+        final Timer timer = new Timer();
+        final TimerTask timerTask;
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                //refresh Favorites List
+                refreshFavoriteListView(favoritesListViewAdapter);
+            }
+        };
+
+
+        Switch onOffSwitch = (Switch)  findViewById(R.id.autorefreshSwitch);
+        onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
+                if (isChecked){
+                    timer.schedule(timerTask, 0, 10000);
+                } else {
+                    timer.cancel();
+                }
+            }
+        });
     }
 
     private void getQuote(String symbol) {

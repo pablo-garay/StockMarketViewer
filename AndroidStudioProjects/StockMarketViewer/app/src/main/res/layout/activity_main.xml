@@ -89,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Auto Refresh"
-                    android:id="@+id/switch1"
+                    android:id="@+id/autorefreshSwitch"
                     android:checked="false"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -101,8 +101,8 @@
                     android:src="@drawable/refresh_128"
                     android:background="@android:color/transparent"
                     android:scaleType="fitXY"
-                    android:layout_alignBottom="@+id/switch1"
-                    android:layout_toEndOf="@+id/switch1"
+                    android:layout_alignBottom="@+id/autorefreshSwitch"
+                    android:layout_toEndOf="@+id/autorefreshSwitch"
                     android:layout_marginLeft="10dp" />
             </LinearLayout>
 
