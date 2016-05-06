@@ -62,7 +62,9 @@ public class ResultActivity extends AppCompatActivity {
     private ShareDialog shareDialog;
     private CallbackManager callbackManager;
     private String stockSymbol;
+    private String companyName;
     private PhotoViewAttacher mAttacher;
+    private String currentLastStockPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,10 +197,10 @@ public class ResultActivity extends AppCompatActivity {
 
                 if (ShareDialog.canShow(ShareLinkContent.class)) {
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                            .setContentUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=" + stockSymbol + "&lang=en-US&width=1200&height=1200"))
-                            .setContentTitle("Current Stock Price of Facebook, Inc., $ 123")
+                            .setContentUrl(Uri.parse("http://dev.markitondemand.com/MODApis/"))
+                            .setContentTitle("Current Stock Price of " + companyName + ", " + currentLastStockPrice)
                             .setImageUrl(Uri.parse("http://chart.finance.yahoo.com/t?s=" + stockSymbol + "&lang=en-US&width=1200&height=1200"))
-                            .setContentDescription("Stock Information of Facebook, Inc.")
+                            .setContentDescription("Stock Information of " + companyName)
                             .build();
 
                     shareDialog.show(linkContent /*, ShareDialog.Mode*/); /* Show Facebook Share Dialog */
@@ -328,7 +330,6 @@ public class ResultActivity extends AppCompatActivity {
 
     class StockDetailsFragmentFiller extends AsyncTask<String,String,String> {
         HttpURLConnection urlConnection;
-        String companyName = "";
 
         @Override
         protected String doInBackground(String... key) {
@@ -363,6 +364,7 @@ public class ResultActivity extends AppCompatActivity {
                     companyName = resultObject.get("Name").toString();
                     entries.add(new StockDetailsEntry("NAME", companyName, 0));
                     entries.add(new StockDetailsEntry("SYMBOL", resultObject.get("Symbol").toString(), 0));
+                    currentLastStockPrice = resultObject.get("Last Price").toString();
                     entries.add(new StockDetailsEntry("LASTPRICE", resultObject.get("Last Price").toString(), 0));
                     entries.add(new StockDetailsEntry("CHANGE",
                             resultObject.get("Change (Change Percent)").toString(), (int) resultObject.get("Change Indicator")));
