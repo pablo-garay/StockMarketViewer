@@ -1,9 +1,12 @@
 package com.pgaray.stockmarketviewer;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
@@ -17,11 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -280,18 +286,44 @@ public class ResultActivity extends AppCompatActivity {
             return imageBitmap;
         }
 
-        protected void onPostExecute(Bitmap result) {
+        protected void onPostExecute(final Bitmap result) {
             bmImage.setImageBitmap(result);
             // If you later call mImageView.setImageDrawable/setImageBitmap/setImageResource/etc then you just need to call
-            mAttacher.update();
+//            mAttacher.update();
 
-            /*bmImage.setOnClickListener(new View.OnClickListener() {
+            bmImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(ResultActivity.this, "Clicked imageview!", Toast.LENGTH_LONG).show();
+
+                    showImage(result);
                 }
-            });*/
+            });
         }
+    }
+
+    public void showImage(Bitmap imageBitmap) {
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                //nothing;
+            }
+        });
+
+        ImageView imageView = new ImageView(this);
+        imageView.setImageBitmap(imageBitmap);
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.show();
+
+        // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
+        // (not needed unless you are going to change the drawable later)
+        mAttacher = new PhotoViewAttacher(imageView);
     }
 
     class StockDetailsFragmentFiller extends AsyncTask<String,String,String> {
@@ -383,9 +415,7 @@ public class ResultActivity extends AppCompatActivity {
 
                     /* show Image in a ImageView */
                     ImageView chartImageView = (ImageView) findViewById(R.id.todayStockChartImageView);
-                    // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
-                    // (not needed unless you are going to change the drawable later)
-                    mAttacher = new PhotoViewAttacher(chartImageView);
+
                     new DownloadImageTask(chartImageView)
                             .execute("http://chart.finance.yahoo.com/t?s=" + companySymbol + "&lang=en-US&width=1200&height=1200");
                 }
